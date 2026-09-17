@@ -1,7 +1,6 @@
 class Game
   CODESIZE = 4  
   MAXTURNS = 12
-  DEFAULT_COLORS = ['red', 'green', 'blue', 'pink', 'purple', 'orange']
   ALL_CORRECT = 'O'
   COLOR_CORRECT = 'C'
   NONE_CORRECT = 'X'
@@ -9,16 +8,8 @@ class Game
   def initialize()
     @code = Array.new(CODESIZE, nil)
     @code_accuracy = Array.new(CODESIZE, NONE_CORRECT)
-    @color_array = DEFAULT_COLORS.dup
-    @colors = @color_array.size
+    @current_guess = nil
     @turn = 1
-  end
-
-  def validate_guess
-    unless @current_guess.size == @colors
-      false
-    end
-    true
   end
 
   def check
