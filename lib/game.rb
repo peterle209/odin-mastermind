@@ -1,5 +1,6 @@
 class Game
   CODESIZE = 4  
+  MAXTURNS = 12
   DEFAULT_COLORS = ['red', 'green', 'blue', 'pink', 'purple', 'orange']
   ALL_CORRECT = 'O'
   COLOR_CORRECT = 'C'
@@ -11,6 +12,7 @@ class Game
     @code_accuracy = Array.new(CODESIZE, NONE_CORRECT)
     @color_array = DEFAULT_COLORS.dup
     @colors = @color_array.size
+    @turn = 1
   end
 
   def computer_create_code
@@ -20,15 +22,22 @@ class Game
 
   def guess
     puts "Current Game Rules: #{@colors} colors, #{@code.size} color combination to guess."
-    puts "Please input your guess (eg 'red, green, blue' for a guess in those positions)"
+    puts "Turn ##{@turn}: Please input your guess (eg 'red, green, blue' for a guess in those positions)"
     @current_guess = gets.downcase.gsub(/\s+/, "").split(',')
     unless validate_guess
       puts 'Please input a valid guess! (you may have guessed with the wrong number of colors)'
       @current_guess = gets.downcase.gsub(/\s+/, "").split(',')
     end
     check
-    puts @code_accuracy
-    displayCodeAccuracy
+    display_code_accuracy
+    @turn += 1
+    if win?
+      puts "Congrats!" 
+      return true
+    elsif loss?
+      puts "Good effort!"
+      return true
+    end
     resetCodeAccuracy
   end
 
@@ -58,11 +67,11 @@ class Game
     end
   end
 
-  def resetCodeAccuracy
+  def reset_code_accuracy
     @code_accuracy.map! {|entry| entry = NONE_CORRECT}
   end
 
-  def displayCodeAccuracy
+  def display_code_accuracy
     @code_accuracy.each_with_index do |entry,idx|
       print "Entry #{idx} of guess: "
       puts "Correct color and position" if entry == ALL_CORRECT
@@ -71,7 +80,16 @@ class Game
     end
   end
 
-  test = Game.new('guesser')
-  test.computer_create_code
-  test.guess
+  def win?
+    win = true
+    @code_accuracy.each do |entry|
+      win = false unless entry == ALL_CORRECT
+    end
+    win
+  end
+
+  def loss?
+    return true if turn > MAXTURNS
+    false
+  end
 end
