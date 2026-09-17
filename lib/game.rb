@@ -20,13 +20,17 @@ class Game
     puts @code
   end
 
-  def guess
+  def start_game
     puts "Current Game Rules: #{@colors} colors, #{@code.size} color combination to guess."
-    puts "Turn ##{@turn}: Please input your guess (eg 'red, green, blue' for a guess in those positions)"
-    @current_guess = gets.downcase.gsub(/\s+/, "").split(',')
+    guess
+  end
+
+  def guess
+    puts "Turn ##{@turn}: Please input your guess (eg 'red green blue' for a guess in those positions)"
+    @current_guess = gets.downcase.chomp.split(' ')
     unless validate_guess
       puts 'Please input a valid guess! (you may have guessed with the wrong number of colors)'
-      @current_guess = gets.downcase.gsub(/\s+/, "").split(',')
+      @current_guess = gets.downcase.chomp.split(' ')
     end
     check
     display_code_accuracy
@@ -38,7 +42,8 @@ class Game
       puts "Good effort!"
       return true
     end
-    resetCodeAccuracy
+    reset_code_accuracy
+    false
   end
 
   def validate_guess
@@ -51,17 +56,19 @@ class Game
   def check
     correct_indices = Array.new
     CODESIZE.times do |idx|
+      puts "Guess at #{idx}: #{@current_guess[idx]}"
+      puts "Code at #{idx}: #{@code[idx]}"
       if @current_guess[idx] == @code[idx]
         @code_accuracy[idx] = ALL_CORRECT 
         correct_indices.push(idx)
       end
     end
 
-    CODESIZE.times do |i|
-       @code.each_with_index do |code_entry, idx|
-        if code_entry == @current_guess[i] && !correct_indices.include?(idx)
-          @code_accuracy[i] = COLOR_CORRECT
-          correct_indices.push(idx)
+    CODESIZE.times do |guess_index|
+       @code.each_with_index do |code_entry, check_index|
+        if code_entry == @current_guess[guess_index] && !correct_indices.include?(check_index) && @current_guess[guess_index] == NONE_CORRECT
+          @code_accuracy[guess_index] = COLOR_CORRECT
+          correct_indices.push(check_index)
         end
       end
     end
@@ -89,7 +96,7 @@ class Game
   end
 
   def loss?
-    return true if turn > MAXTURNS
+    return true if @turn > MAXTURNS
     false
   end
 end
