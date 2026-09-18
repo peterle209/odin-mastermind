@@ -4,33 +4,14 @@ class Game
   ALL_CORRECT = 'O'
   COLOR_CORRECT = 'C'
   NONE_CORRECT = 'X'
+  DEFAULT_COLORS = ['red', 'green', 'blue', 'pink', 'purple', 'orange']
 
   def initialize()
     @code = Array.new(CODESIZE, nil)
-    @code_accuracy = Array.new(CODESIZE, NONE_CORRECT)
+    @code_accuracy = Array.new(CODESIZE) {Game::NONE_CORRECT}
     @current_guess = nil
+    @color_array = DEFAULT_COLORS.dup
     @turn = 1
-  end
-
-  def check
-    correct_indices = Array.new
-    CODESIZE.times do |idx|
-      puts "Guess at #{idx}: #{@current_guess[idx]}"
-      puts "Code at #{idx}: #{@code[idx]}"
-      if @current_guess[idx] == @code[idx]
-        @code_accuracy[idx] = ALL_CORRECT 
-        correct_indices.push(idx)
-      end
-    end
-
-    CODESIZE.times do |guess_index|
-       @code.each_with_index do |code_entry, check_index|
-        if code_entry == @current_guess[guess_index] && !correct_indices.include?(check_index) && @current_guess[guess_index] == NONE_CORRECT
-          @code_accuracy[guess_index] = COLOR_CORRECT
-          correct_indices.push(check_index)
-        end
-      end
-    end
   end
 
   def reset_code_accuracy
